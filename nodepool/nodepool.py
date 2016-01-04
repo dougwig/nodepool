@@ -482,7 +482,7 @@ class NodeLauncher(threading.Thread):
                 self.log.warning('Preferred ipv6 not available, '
                                  'falling back to ipv4.')
         ip_private = server.get('private_v4')
-        if self.provider.use_private_ip:
+        if self.provider.use_private_ip_as_public:
             ip = ip_private
         if not ip and self.manager.hasExtension('os-floating-ips'):
             ip = self.manager.addPublicIP(server_id,
@@ -1377,6 +1377,8 @@ class NodePool(threading.Thread):
             p.use_neutron = bool(provider.get('networks', ()))
             p.networks = provider.get('networks')
             p.ipv6_preferred = provider.get('ipv6-preferred')
+            p.use_private_ip_as_public = \
+                provider.get('use-private-ip-as-public')
             p.azs = provider.get('availability-zones')
             p.template_hostname = provider.get(
                 'template-hostname',
