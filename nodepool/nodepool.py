@@ -481,6 +481,9 @@ class NodeLauncher(threading.Thread):
             else:
                 self.log.warning('Preferred ipv6 not available, '
                                  'falling back to ipv4.')
+        ip_private = server.get('private_v4')
+        if self.provider.use_private_ip:
+            ip = ip_private
         if not ip and self.manager.hasExtension('os-floating-ips'):
             ip = self.manager.addPublicIP(server_id,
                                           pool=self.provider.pool)
@@ -490,7 +493,7 @@ class NodeLauncher(threading.Thread):
                     server))
             raise LaunchNetworkException("Unable to find public IP of server")
 
-        self.node.ip_private = server.get('private_v4')
+        self.node.ip_private = ip_private
         self.node.ip = ip
         self.log.debug("Node id: %s is running, ipv4: %s, ipv6: %s" %
                        (self.node.id, server.get('public_v4'),
